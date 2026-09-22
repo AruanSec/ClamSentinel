@@ -1,69 +1,112 @@
-const stats = [
-    { label: 'Protected files', value: '842' },
-    { label: 'Threats found', value: '17' },
-    { label: 'Avg scan', value: '112ms' },
-    { label: 'System health', value: 'Healthy' },
+import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getDashboard } from './services/mockApi';
+
+const navigation = [
+    { label: 'Dashboard', path: '/' },
+    { label: 'Quick Scan', path: '/scan' },
+    { label: 'Scan History', path: '/history' },
+    { label: 'Quarantine', path: '/quarantine' },
+    { label: 'Virus Definitions', path: '/definitions' },
+    { label: 'Observability', path: '/observability' },
+    { label: 'Settings', path: '/settings' },
 ];
+
+function Dashboard() {
+    const { data } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard });
+
+    if (!data) {
+        return <p>Loading dashboard...</p>;
+    }
+
+    return (
+        <>
+            <header className="page-header">
+                <div>
+                    <div className="eyebrow">ClamSentinel</div>
+                    <h1>Operations Dashboard</h1>
+                </div>
+                <div className="status-pill">Status: {data.status}</div>
+            </header>
+
+            <section className="stats-grid">
+                {data.stats.map((stat) => (
+                    <div className="panel stat-card" key={stat.label}>
+                        <div className="muted">{stat.label}</div>
+                        <div className="stat-value">{stat.value}</div>
+                    </div>
+                ))}
+            </section>
+
+            <section className="dashboard-grid">
+                <div className="panel">
+                    <h2>Recent scans</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.recentScans.map((scan) => (
+                                <tr key={scan.id}>
+                                    <td>{scan.filename}</td>
+                                    <td className={`scan-status ${scan.status.toLowerCase()}`}>{scan.status}</td>
+                                    <td>{scan.time}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <aside className="panel">
+                    <h2>ClamAV Status</h2>
+                    <p className="status-line"><span className="status-dot" />Signature database up to date</p>
+                    <p className="muted">Last update: {data.lastUpdated}</p>
+                </aside>
+            </section>
+        </>
+    );
+}
+
+function PlaceholderPage({ title }: { title: string }) {
+    return (
+        <section className="panel placeholder-page">
+            <div className="eyebrow">Phase 2 foundation</div>
+            <h1>{title}</h1>
+            <p className="muted">This route is connected and ready for its feature implementation.</p>
+        </section>
+    );
+}
+
+function AppShell() {
+    return (
+        <div className="app-shell">
+            <aside className="sidebar">
+                <div className="brand">ClamSentinel</div>
+                <nav aria-label="Primary navigation">
+                    {navigation.map((item) => (
+                        <NavLink className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} end={item.path === '/'} key={item.path} to={item.path}>
+                            {item.label}
+                        </NavLink>
+                    ))}
+                </nav>
+            </aside>
+            <main className="content">
+                <Routes>
+                    <Route element={<Dashboard />} path="/" />
+                    {navigation.slice(1).map((item) => <Route element={<PlaceholderPage title={item.label} />} key={item.path} path={item.path} />)}
+                    <Route element={<Navigate replace to="/" />} path="*" />
+                </Routes>
+            </main>
+        </div>
+    );
+}
 
 export default function App() {
     return (
-        <main style={{ fontFamily: 'Inter, sans-serif', background: '#0b1220', color: '#e5e7eb', minHeight: '100vh', padding: '32px' }}>
-            <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-                    <div>
-                        <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>ClamSentinel</div>
-                        <h1 style={{ margin: '8px 0 0', fontSize: 32 }}>Operations Dashboard</h1>
-                    </div>
-                    <div style={{ padding: '10px 16px', borderRadius: 8, background: '#111827', border: '1px solid #374151' }}>
-                        Status: Healthy
-                    </div>
-                </header>
-
-                <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 32 }}>
-                    {stats.map((stat) => (
-                        <div key={stat.label} style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 20 }}>
-                            <div style={{ color: '#94a3b8', fontSize: 12, marginBottom: 8 }}>{stat.label}</div>
-                            <div style={{ fontSize: 28, fontWeight: 700 }}>{stat.value}</div>
-                        </div>
-                    ))}
-                </section>
-
-                <section style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
-                    <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 20 }}>
-                        <h2 style={{ margin: '0 0 12px', fontSize: 20 }}>Recent scans</h2>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ color: '#94a3b8', fontSize: 12, textAlign: 'left' }}>
-                                    <th style={{ padding: '8px 0' }}>File</th>
-                                    <th style={{ padding: '8px 0' }}>Status</th>
-                                    <th style={{ padding: '8px 0' }}>Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style={{ padding: '10px 0' }}>invoice.pdf</td>
-                                    <td style={{ color: '#22c55e' }}>Clean</td>
-                                    <td>10:42</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '10px 0' }}>payload.exe</td>
-                                    <td style={{ color: '#ef4444' }}>Threat</td>
-                                    <td>09:11</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <aside style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 20 }}>
-                        <h2 style={{ margin: '0 0 16px', fontSize: 20 }}>ClamAV Status</h2>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-                            Signature database up to date
-                        </div>
-                        <div>Last update: 2026-09-20 18:22 UTC</div>
-                    </aside>
-                </section>
-            </div>
-        </main>
+        <AppShell />
     );
 }

@@ -28,3 +28,211 @@ h2,
 p {
     margin-top: 0;
 }
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    flex: 0 0 240px;
+    padding: 28px 16px;
+    background: #111827;
+    border-right: 1px solid #374151;
+}
+
+.brand {
+    margin: 0 12px 32px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.sidebar nav {
+    display: grid;
+    gap: 6px;
+}
+
+.nav-link {
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: #94a3b8;
+    text-decoration: none;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: #1f2937;
+    color: #e5e7eb;
+}
+
+.content {
+    width: min(1120px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.eyebrow {
+    color: #94a3b8;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin-bottom: 0;
+    font-size: 32px;
+}
+
+h2 {
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+.status-pill,
+.panel {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 8px;
+}
+
+.status-pill {
+    padding: 10px 16px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.panel {
+    padding: 20px;
+}
+
+.stat-card {
+    min-height: 108px;
+}
+
+.muted {
+    color: #94a3b8;
+}
+
+.stat-value {
+    margin-top: 8px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 10px 0;
+    border-bottom: 1px solid #1f2937;
+    text-align: left;
+}
+
+.scan-status {
+    font-weight: 600;
+}
+
+.scan-status.clean {
+    color: #22c55e;
+}
+
+.scan-status.infected {
+    color: #ef4444;
+}
+
+.status-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+.placeholder-page {
+    min-height: 260px;
+}
+
+@media (max-width: 800px) {
+    .app-shell {
+        display: block;
+    }
+
+    .sidebar {
+        width: auto;
+        padding: 16px;
+    }
+
+    .sidebar nav {
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .nav-link {
+        white-space: nowrap;
+    }
+
+    .content {
+        width: calc(100% - 32px);
+    }
+
+    .stats-grid,
+    .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+
+    .page-header,
+    .dashboard-grid {
+        display: block;
+    }
+
+    .status-pill {
+        display: inline-block;
+        margin-top: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid .panel+.panel {
+        margin-top: 16px;
+    }
+}
